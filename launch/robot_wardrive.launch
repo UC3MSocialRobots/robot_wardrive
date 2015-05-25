@@ -3,9 +3,9 @@
 <launch>
   <arg name="robot"/>
   <group ns="$(arg robot)">
-    <node name="robot_wardrive" 
+    <node name="robot_wardrive_node" 
           pkg="robot_wardrive"
-          type="robot_wardrive.py" 
+          type="robot_wardrive_node.py" 
           respawn="false" 
           output="screen"/>  
   </group>
