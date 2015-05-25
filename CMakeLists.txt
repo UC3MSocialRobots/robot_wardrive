@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(wifi_monitor)
+project(robot_wardrive)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -81,7 +81,7 @@ generate_messages(
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
 #  INCLUDE_DIRS include
-#  LIBRARIES wifi_monitor
+#  LIBRARIES robot_wardrive
 #  CATKIN_DEPENDS geometry_msgs rospy rospy_utils
 #  DEPENDS system_lib
 )
@@ -98,19 +98,19 @@ include_directories(
 )
 
 ## Declare a cpp library
-# add_library(wifi_monitor
-#   src/${PROJECT_NAME}/wifi_monitor.cpp
+# add_library(robot_wardrive
+#   src/${PROJECT_NAME}/robot_wardrive.cpp
 # )
 
 ## Declare a cpp executable
-# add_executable(wifi_monitor_node src/wifi_monitor_node.cpp)
+# add_executable(robot_wardrive_node src/robot_wardrive_node.cpp)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
-# add_dependencies(wifi_monitor_node wifi_monitor_generate_messages_cpp)
+# add_dependencies(robot_wardrive_node robot_wardrive_generate_messages_cpp)
 
 ## Specify libraries to link a library or executable target against
-# target_link_libraries(wifi_monitor_node
+# target_link_libraries(robot_wardrive_node
 #   ${catkin_LIBRARIES}
 # )
 
@@ -129,7 +129,7 @@ include_directories(
 # )
 
 ## Mark executables and/or libraries for installation
-# install(TARGETS wifi_monitor wifi_monitor_node
+# install(TARGETS robot_wardrive robot_wardrive_node
 #   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
@@ -154,7 +154,7 @@ include_directories(
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_wifi_monitor.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_robot_wardrive.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()
