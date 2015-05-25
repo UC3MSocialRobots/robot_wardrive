@@ -48,7 +48,8 @@ def parse_signal(raw_signal):
         >>> signal = cat("/proc/net/wireless")
         >>> link, level, noise = parse_signal(signal)
     """
-    return map(float, raw_signal.split('\n')[2].split()[2:5])
+    signal = raw_signal.split('\n')[2].split()[2:5]
+    return map(float, signal) or (None, None, None)
 
 
 def make_signal_location_msg(amcl_pose):
