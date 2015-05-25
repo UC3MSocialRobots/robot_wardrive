@@ -27,7 +27,7 @@ from rospy_utils import coroutines as co
 from sh import cat
 
 from geometry_msgs.msg import PoseWithCovarianceStamped
-from wifi_monitor.msg import SignalLocation
+from robot_wardrive.msg import SignalLocation
 
 
 def get_signal():
@@ -71,7 +71,7 @@ def _init_node(node_name):
     rospy.init_node(node_name)
     rospy.loginfo("Initializing {} Node".format(rospy.get_name()))
 
-_DEFAULT_NAME = 'wifi_monitor'
+_DEFAULT_NAME = 'robot_wardrive'
 
 if __name__ == '__main__':
 
