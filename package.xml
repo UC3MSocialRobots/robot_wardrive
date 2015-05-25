@@ -47,6 +47,7 @@
   <run_depend>geometry_msgs</run_depend>
   <run_depend>rospy</run_depend>
   <run_depend>rospy_utils</run_depend>
+  <depend>message_generation</depend>
 
 
   <!-- The export tag contains other, unspecified, tags -->
