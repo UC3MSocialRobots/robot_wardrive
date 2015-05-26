@@ -56,16 +56,9 @@ def parse_signal(raw_signal):
 def make_signal_location_msg(amcl_pose):
     """Merge a current position with WiFi signal level."""
     link, level, noise = parse_signal(get_signal())
-    return SignalLocation(pose=amcl_pose.pose.pose,
+    return SignalLocation(header=amcl_pose.header,
+                          pose=amcl_pose.pose.pose,
                           link=link, level=level, noise=noise)
-
-
-# def monitor_signal(signal, logger=rospy.loginfo):
-#     """Output signal to logger once a second."""
-#     while(1):
-#         rospy.sleep(1)
-#         signal = cat("/proc/net/wireless")
-#         print parse_signal(signal)
 
 
 def _init_node(node_name):
