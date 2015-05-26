@@ -42,6 +42,7 @@ def parse_signal(raw_signal):
         raw_signal: signal raw data.
     Return:
         (float, float, float): signal's link, level and noise.
+        (0.0, 0.0, 0.0): In case wifi is not detected.
 
     Example:
         >>> from sh import cat
