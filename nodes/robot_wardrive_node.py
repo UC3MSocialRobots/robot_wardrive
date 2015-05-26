@@ -49,7 +49,7 @@ def parse_signal(raw_signal):
         >>> link, level, noise = parse_signal(signal)
     """
     signal = raw_signal.split('\n')[2].split()[2:5]
-    return map(float, signal) or (None, None, None)
+    return map(float, signal) or (0.0, 0.0, 0.0)
 
 
 def make_signal_location_msg(amcl_pose):
