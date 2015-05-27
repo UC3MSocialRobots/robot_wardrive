@@ -72,7 +72,7 @@ if __name__ == '__main__':
 
     try:
         _init_node(_DEFAULT_NAME)
-        pipe = co.pipe([co.do(make_signal_location_msg),
+        pipe = co.pipe([co.mapper(make_signal_location_msg),
                         co.publisher('signal_location', SignalLocation)])
         co.PipedSubscriber('amcl_pose', PoseWithCovarianceStamped, pipe)
         rospy.spin()
