@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="US-ASCII"?>
 <launch>
   <arg name="robot"/>
+  <arg name="bagy"/> <!-- file name of the bagy to store PsingLocation msgs -->
   <group ns="$(arg robot)">
     <node name="robot_wardrive_node" 
           pkg="robot_wardrive"
@@ -10,6 +11,7 @@
     <node name="ping_locator_node" 
           pkg="robot_wardrive"
           type="ping_locator_node.py" 
+          args="$(find robot_wardrive)/data/$(arg bagy)"
           respawn="false" 
           output="screen"/>
   </group>

@@ -23,23 +23,13 @@ Relates ping delay to a location of the robot.
 """
 
 import rospy
+import sys
 from sh import ping
 from threading import Thread
+from rosh import Bagy
 
 from geometry_msgs.msg import PoseWithCovarianceStamped
 from robot_wardrive.msg import PingLocation
-
-
-def publish_ping_err(error, pinger):
-        """Callback triggered when ping loses its connection.
-
-        It publishes a PingLocation message with delay=-1.0
-
-        Args:
-        ----
-        pinger: The pinger instance used that will publish the error.
-        """
-        pinger.publish_delay(-1.0)
 
 
 class Pinger(object):
@@ -52,7 +42,7 @@ class Pinger(object):
 
     """
 
-    def __init__(self, host="8.8.8.8", interval=0.5):
+    def __init__(self, bagy_name, host="8.8.8.8", interval=0.5):
         """Init.
 
         Args:
@@ -63,6 +53,7 @@ class Pinger(object):
         super(Pinger, self).__init__()
         rospy.on_shutdown(self.shutdown)
         self.pose = None
+        self.ping_logger = Bagy(bagy_name, 'w', PingLocation)
         self._pinger = Thread(target=self.do_ping,
                               kwargs={'host': host, 'interval': interval})
 
@@ -76,14 +67,20 @@ class Pinger(object):
             delay = data.split()[-2].split("=")[-1]
             self.publish_delay(delay)
 
+    def log_ping_location(self, msg):
+        """Log a PingLocation msg to the node Bagy."""
+        self.ping_logger.write(msg)
+
     def publish_delay(self, delay):
         """Publish a PingLocation message from a delay."""
         try:
             ping_msg = PingLocation(delay=float(delay), pose=self.pose)
-            ping.msg.header.stamp = rospy.get_rostime()
-            self.publisher.publish(ping_msg)
         except ValueError:
             pass
+        else:
+            ping_msg.header.stamp = rospy.get_rostime()
+            self.log_ping_location(ping_msg)
+            self.publisher.publish(ping_msg)
 
     def publish_ping_err(self, error_):
         """
@@ -91,7 +88,7 @@ class Pinger(object):
 
         It publishes a PingLocation message with delay field set to -1.0
         """
-        rospy.logdebug("Ping returned error: {}".format(str(error_)))
+        rospy.logerr("Ping returned error: {}".format(str(error_)))
         self.publish_delay(-1.0)
 
     def pose_cb(self, amcl_msg):
@@ -99,8 +96,12 @@ class Pinger(object):
         self.pose = amcl_msg.pose.pose
 
     def shutdown(self):
-        """Hook to be executed when rospy.shutdown is called."""
-        pass
+        """
+        Hook to be executed when rospy.shutdown is called.
+
+        Closes the Bagy when the node shutdowns.
+        """
+        self.ping_logger.close()
 
     def run(self):
         """Run the node."""
@@ -116,10 +117,11 @@ def _init_node(node_name):
 _DEFAULT_NAME = 'ping_locator_node'
 
 if __name__ == '__main__':
-
+    bagy_file = rospy.myargv(argv=sys.argv)[1]
+    rospy.loginfo("Bagy name is: {}".format(bagy_file))
     try:
         _init_node(_DEFAULT_NAME)
-        pinger = Pinger()
+        pinger = Pinger(bagy_name=bagy_file)
         pinger.run()
     except rospy.ROSInterruptException:
         pass
