@@ -42,11 +42,6 @@ def publish_ping_err(error, pinger):
         pinger.publish_delay(-1.0)
 
 
-def make_ping_location_msg(delay, pose):
-    """Make a PingLocation msg."""
-    return PingLocation(pose=pose, delay=delay)
-
-
 class Pinger(object):
 
     """
@@ -66,11 +61,11 @@ class Pinger(object):
         interval (float): interval between pings in seconds. Default: 0.5
         """
         super(Pinger, self).__init__()
+        rospy.on_shutdown(self.shutdown)
         self.pose = None
         self._pinger = Thread(target=self.do_ping,
                               kwargs={'host': host, 'interval': interval})
 
-        rospy.on_shutdown(self.shutdown)
         rospy.Subscriber('amcl_pose', PoseWithCovarianceStamped, self.pose_cb)
         self.publisher = rospy.Publisher('ping', PingLocation)
 
@@ -84,7 +79,8 @@ class Pinger(object):
     def publish_delay(self, delay):
         """Publish a PingLocation message from a delay."""
         try:
-            ping_msg = make_ping_location_msg(float(delay), self.pose)
+            # ping_msg = make_ping_location_msg(float(delay), self.pose)
+            ping_msg = PingLocation(delay=float(delay), pose=self.pose)
             ping.msg.header.stamp = rospy.get_rostime()
             self.publisher.publish(ping_msg)
         except ValueError:
@@ -105,8 +101,7 @@ class Pinger(object):
 
     def shutdown(self):
         """Hook to be executed when rospy.shutdown is called."""
-        self.save_db(self.db_filename)
-        return self
+        pass
 
     def run(self):
         """Run the node."""
@@ -125,6 +120,7 @@ if __name__ == '__main__':
 
     try:
         _init_node(_DEFAULT_NAME)
-        Pinger().run()
+        pinger = Pinger()
+        pinger.run()
     except rospy.ROSInterruptException:
         pass
