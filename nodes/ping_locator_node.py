@@ -79,7 +79,6 @@ class Pinger(object):
     def publish_delay(self, delay):
         """Publish a PingLocation message from a delay."""
         try:
-            # ping_msg = make_ping_location_msg(float(delay), self.pose)
             ping_msg = PingLocation(delay=float(delay), pose=self.pose)
             ping.msg.header.stamp = rospy.get_rostime()
             self.publisher.publish(ping_msg)
