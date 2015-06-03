@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="US-ASCII"?>
-
 <launch>
   <arg name="robot"/>
   <group ns="$(arg robot)">
@@ -7,6 +6,11 @@
           pkg="robot_wardrive"
           type="robot_wardrive_node.py" 
           respawn="false" 
-          output="screen"/>  
+          output="screen"/>
+    <node name="ping_locator_node" 
+          pkg="robot_wardrive"
+          type="ping_locator_node.py" 
+          respawn="false" 
+          output="screen"/>
   </group>
 </launch>
