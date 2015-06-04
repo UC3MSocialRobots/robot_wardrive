@@ -76,11 +76,11 @@ class Pinger(object):
         try:
             ping_msg = PingLocation(delay=float(delay), pose=self.pose)
         except ValueError:
-            pass
-        else:
-            ping_msg.header.stamp = rospy.get_rostime()
-            self.log_ping_location(ping_msg)
-            self.publisher.publish(ping_msg)
+            return
+
+        ping_msg.header.stamp = rospy.get_rostime()
+        self.log_ping_location(ping_msg)
+        self.publisher.publish(ping_msg)
 
     def publish_ping_err(self, error_):
         """
@@ -92,7 +92,7 @@ class Pinger(object):
         self.publish_delay(-1.0)
 
     def pose_cb(self, amcl_msg):
-        """Get pose of the robot."""
+        """Store pose of the robot."""
         self.pose = amcl_msg.pose.pose
 
     def shutdown(self):
