@@ -64,12 +64,18 @@ class Pinger(object):
         """Get ping information and publish it."""
         for data in ping(host, "-i", str(interval), _iter=True,
                          _err=self.publish_ping_err):
+            if rospy.is_shutdown():
+                return              # Exit thread when node closes
             delay = data.split()[-2].split("=")[-1]
             self.publish_delay(delay)
 
     def log_ping_location(self, msg):
         """Log a PingLocation msg to the node Bagy."""
-        self.ping_logger.write(msg)
+        try:
+            self.ping_logger.write(msg)
+        except ValueError:
+            bname = self.ping_logger.name
+            rospy.logdebug("Trying to write on closed bagy: {}".format(bname))
 
     def publish_delay(self, delay):
         """Publish a PingLocation message from a delay."""
@@ -77,7 +83,6 @@ class Pinger(object):
             ping_msg = PingLocation(delay=float(delay), pose=self.pose)
         except ValueError:
             return
-
         ping_msg.header.stamp = rospy.get_rostime()
         self.log_ping_location(ping_msg)
         self.publisher.publish(ping_msg)
@@ -117,11 +122,11 @@ def _init_node(node_name):
 _DEFAULT_NAME = 'ping_locator_node'
 
 if __name__ == '__main__':
-    bagy_file = rospy.myargv(argv=sys.argv)[1]
+    bagy_file, host, rate = rospy.myargv(argv=sys.argv)[1:4]
     rospy.loginfo("Bagy name is: {}".format(bagy_file))
     try:
         _init_node(_DEFAULT_NAME)
-        pinger = Pinger(bagy_name=bagy_file)
+        pinger = Pinger(bagy_name=bagy_file, host=host)
         pinger.run()
     except rospy.ROSInterruptException:
         pass

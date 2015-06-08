@@ -8,10 +8,16 @@
           type="robot_wardrive_node.py" 
           respawn="false" 
           output="screen"/>
-    <node name="ping_locator_node" 
+    <node name="ping_google_node" 
           pkg="robot_wardrive"
           type="ping_locator_node.py" 
-          args="$(find robot_wardrive)/data/$(arg bagy)"
+          args="$(find robot_wardrive)/data/$(arg bagy)_google.bagy 8.8.8.8 0.5"
+          respawn="false" 
+          output="screen"/>
+    <node name="ping_mpc_node" 
+          pkg="robot_wardrive"
+          type="ping_locator_node.py" 
+          args="$(find robot_wardrive)/data/$(arg bagy)_mpc.bagy 163.117.150.89 0.5"
           respawn="false" 
           output="screen"/>
   </group>
