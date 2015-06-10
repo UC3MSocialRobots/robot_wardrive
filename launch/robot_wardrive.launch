@@ -6,6 +6,7 @@
     <node name="robot_wardrive_node" 
           pkg="robot_wardrive"
           type="robot_wardrive_node.py" 
+          args="$(find robot_wardrive)/data/$(arg bagy)_signal_location.bagy"
           respawn="false" 
           output="screen"/>
     <node name="ping_google_node" 

@@ -22,9 +22,13 @@ Matches Wifi Signal Strenght with AMCL PoseWithCovarianceStamped messages.
 :maintainer: Victor Gonzalez Pacheco
 """
 
+from functools import partial
+import sys
+from sh import cat
+
 import rospy
 from rospy_utils import coroutines as co
-from sh import cat
+from rosh import Bagy
 
 from geometry_msgs.msg import PoseWithCovarianceStamped
 from robot_wardrive.msg import SignalLocation
@@ -61,6 +65,19 @@ def make_signal_location_msg(amcl_pose):
                           link=link, level=level, noise=noise)
 
 
+def write_to_bagy(msg, bagy):
+    """
+    Write msg to a Bagy.
+
+    Log in case of error.
+    """
+    try:
+        bagy.write(msg)
+    except ValueError:
+        bname = bagy.name
+        rospy.logdebug("Trying to write on closed bagy: {}".format(bname))
+
+
 def _init_node(node_name):
     """Common routines for start a node."""
     rospy.init_node(node_name)
@@ -69,12 +86,18 @@ def _init_node(node_name):
 _DEFAULT_NAME = 'robot_wardrive'
 
 if __name__ == '__main__':
-
+    bagy_name = rospy.myargv(argv=sys.argv)[1]
+    rospy.loginfo("Bagy name is: {}".format(bagy_name))
+    bagy = Bagy(bagy_name, 'w', SignalLocation)
+    bagy_logger = partial(write_to_bagy, bagy=bagy)
     try:
         _init_node(_DEFAULT_NAME)
         pipe = co.pipe([co.mapper(make_signal_location_msg),
+                        co.do(bagy_logger),
                         co.publisher('signal_location', SignalLocation)])
         co.PipedSubscriber('amcl_pose', PoseWithCovarianceStamped, pipe)
         rospy.spin()
     except rospy.ROSInterruptException:
         pass
+    finally:
+        bagy.close()  # Close Bagy no mather how the program ends
