@@ -58,7 +58,7 @@ class Pinger(object):
                               kwargs={'host': host, 'interval': interval})
 
         rospy.Subscriber('amcl_pose', PoseWithCovarianceStamped, self.pose_cb)
-        self.publisher = rospy.Publisher('ping', PingLocation)
+        self.publisher = rospy.Publisher('ping', PingLocation, queue_size = 1)
 
     def do_ping(self, host="8.8.8.8", interval=0.5):
         """Get ping information and publish it."""
